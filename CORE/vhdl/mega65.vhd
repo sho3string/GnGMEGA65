@@ -24,11 +24,14 @@ port (
    RESET_M2M_N             : in  std_logic;              -- Debounced system reset in system clock domain
 
    -- Share clock and reset with the framework
-   main_clk_o              : out std_logic;              -- Galaga's 18 MHz main clock
-   main_rst_o              : out std_logic;              -- Galaga's reset, synchronized
+   main_clk_o              : out std_logic;              -- Core main clock - 12 Mhz
+   main_rst_o              : out std_logic;              -- reset, synchronized
    
-   video_clk_o             : out std_logic;              -- video clock 48 MHz
-   video_rst_o             : out std_logic;              -- video reset, synchronized
+   clk24_clk_o             : out std_logic;              -- 24 Mhz
+   clk24_rst_o             : out std_logic;              -- reset, synchronized
+   
+   video_clk_o             : out std_logic;              -- video clock - 48 Mhz
+   video_rst_o             : out std_logic;              -- reset, synchronized
 
    --------------------------------------------------------------------------------------------------------
    -- QNICE Clock Domain
@@ -155,20 +158,24 @@ architecture synthesis of MEGA65_Core is
 -- Clocks and active high reset signals for each clock domain
 ---------------------------------------------------------------------------------------------
 
-signal main_clk            : std_logic;               -- Core main clock
-signal main_rst            : std_logic;
 
-signal video_clk           : std_logic;               
-signal video_rst           : std_logic;
+signal clk12_clk           : std_logic; --
+signal clk12_rst           : std_logic;
+
+signal clk24_clk           : std_logic;
+signal clk24_rst           : std_logic;
+
+signal clk48_clk           : std_logic;               
+signal clk48_rst           : std_logic;
 
 ---------------------------------------------------------------------------------------------
 -- main_clk (MiSTer core's clock)
 ---------------------------------------------------------------------------------------------
 
 -- Unprocessed video output from the Galaga core
-signal main_video_red      : std_logic_vector(2 downto 0);   
-signal main_video_green    : std_logic_vector(2 downto 0);
-signal main_video_blue     : std_logic_vector(1 downto 0);
+signal main_video_red      : std_logic_vector(3 downto 0);   
+signal main_video_green    : std_logic_vector(3 downto 0);
+signal main_video_blue     : std_logic_vector(3 downto 0);
 signal main_video_vs       : std_logic;
 signal main_video_hs       : std_logic;
 signal main_video_hblank   : std_logic;
@@ -239,7 +246,8 @@ constant C_MENU_NAMCO_DSWA_7  : natural := 76;
 
 
 -- Galaga specific video processing
-signal div          : std_logic_vector(2 downto 0);
+signal div_1        : std_logic_vector(2 downto 0);
+signal div_2        : std_logic_vector(3 downto 0);
 signal dim_video    : std_logic;
 signal dsw_a_i      : std_logic_vector(7 downto 0);
 signal dsw_b_i      : std_logic_vector(7 downto 0);
@@ -261,7 +269,7 @@ signal ddram_be         : std_logic_vector( 7 downto 0);
 signal ddram_we         : std_logic;
 
 -- ROM devices for Galaga
-signal qnice_dn_addr    : std_logic_vector(15 downto 0);
+signal qnice_dn_addr    : std_logic_vector(18 downto 0);
 signal qnice_dn_data    : std_logic_vector(7 downto 0);
 signal qnice_dn_wr      : std_logic;
 
@@ -281,19 +289,26 @@ begin
          sys_clk_i         => CLK,             -- expects 100 MHz
          sys_rstn_i        => RESET_M2M_N,     -- Asynchronous, asserted low
          
-         main_clk_o        => main_clk,        -- Galaga's 18 MHz main clock
-         main_rst_o        => main_rst,        -- Galaga's reset, synchronized
+         main_clk_o        => clk12_clk,        -- 12 Mhz main clock
+         main_rst_o        => clk12_rst,        -- reset, synchronized
          
-         video_clk_o       => video_clk,       -- video clock 48 MHz
-         video_rst_o       => video_rst        -- video reset, synchronized
-      
+         clk_24_o          => clk24_clk,        -- 24 Mhz clock
+         clk_24_rst_o      => clk24_rst,        -- reset, synchronized
+         
+         clk48_clk_o       => clk48_clk,        -- 48 MHz
+         clk48_rst_o       => clk48_rst         -- reset, synchronized
+
       ); -- clk_gen
       
  
-   main_clk_o       <= main_clk;
-   main_rst_o       <= main_rst;
-   video_clk_o      <= video_clk;
-   video_rst_o      <= video_rst;
+   main_clk_o       <= clk12_clk;
+   main_rst_o       <= clk12_rst;
+   
+   clk24_clk_o      <= clk24_clk;
+   clk24_rst_o      <= clk24_rst;
+   
+   video_clk_o      <= clk48_clk;
+   video_rst_o      <= clk48_rst;
    
    video_red_o      <= video_red;
    video_green_o    <= video_green;
@@ -311,34 +326,16 @@ begin
               main_osm_control_i(C_MENU_MIDWAY_DSWA_3) &
               main_osm_control_i(C_MENU_MIDWAY_DSWA_2) &
               main_osm_control_i(C_MENU_MIDWAY_DSWA_1) &
-              main_osm_control_i(C_MENU_MIDWAY_DSWA_0)  when main_osm_control_i(C_MENU_MIDWAY) = '1' else
-                    
-              main_osm_control_i(C_MENU_NAMCO_DSWA_7) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_6) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_5) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_4) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_3) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_2) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_1) &
-              main_osm_control_i(C_MENU_NAMCO_DSWA_0);       
+              main_osm_control_i(C_MENU_MIDWAY_DSWA_0);  
    
-  dsw_b_i <=  main_osm_control_i(C_MENU_MIDWAY_DSWB_7) &
+   dsw_b_i <= main_osm_control_i(C_MENU_MIDWAY_DSWB_7) &
               main_osm_control_i(C_MENU_MIDWAY_DSWB_6) &
               main_osm_control_i(C_MENU_MIDWAY_DSWB_5) &
               main_osm_control_i(C_MENU_MIDWAY_DSWB_4) &
               main_osm_control_i(C_MENU_MIDWAY_DSWB_3) &
               main_osm_control_i(C_MENU_MIDWAY_DSWB_2) &
               main_osm_control_i(C_MENU_MIDWAY_DSWB_1) &
-              main_osm_control_i(C_MENU_MIDWAY_DSWB_0)  when main_osm_control_i(C_MENU_MIDWAY) = '1' else
-                    
-              main_osm_control_i(C_MENU_NAMCO_DSWB_7) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_6) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_5) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_4) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_3) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_2) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_1) &
-              main_osm_control_i(C_MENU_NAMCO_DSWB_0);   
+              main_osm_control_i(C_MENU_MIDWAY_DSWB_0);
    
             
    ---------------------------------------------------------------------------------------------
@@ -352,7 +349,7 @@ begin
          
       )
       port map (
-         clk_main_i           => main_clk,
+         clk_main_i           => clk12_clk,
          reset_soft_i         => main_reset_core_i,
          reset_hard_i         => main_reset_m2m_i,
          pause_i              => main_pause_core_i and main_osm_control_i(C_MENU_OSMPAUSE),
@@ -405,33 +402,34 @@ begin
          dsw_b_i              => dsw_b_i
       ); -- i_main
 
-    process (video_clk) -- 48 MHz
+
+    process (clk24_clk) -- 24 Mhz
     begin
-        if rising_edge(video_clk) then
-            video_ce       <= '0';
-            video_ce_ovl_o <= '0';
+        video_ce_ovl_o <= '0';
+        if rising_edge(clk24_clk) then
+             div_1 <= std_logic_vector(unsigned(div_1) + 1);
+             video_ce <= not div_1(0); -- 12 Mhz Pixel clock
+             video_ce_ovl_o <= '1';    -- OSM clock.
+         end if;
+    end process;
+    
+    process (clk48_clk) -- 48 MHz
+    begin
+        if rising_edge(clk48_clk) then
+            --video_ce_ovl_o <= '0';
 
-            div <= std_logic_vector(unsigned(div) + 1);
-            if div="000" then
-               video_ce <= '1'; -- 6 MHz
-            end if;
-            if div(0) = '1' then
-               video_ce_ovl_o <= '1'; -- 24 MHz
-            end if;
+            -- OSM pixel clock
+            --div_2 <= std_logic_vector(unsigned(div_2) + 1);
+            --if div_2(0) = '1' then
+            --   video_ce_ovl_o <= '1'; -- 24 MHz
+            --end if;
 
-            if dim_video = '1' then
-                video_red   <= "0" & main_video_red   & main_video_red   & main_video_red(2 downto 2);
-                video_green <= "0" & main_video_green & main_video_green & main_video_green(2 downto 2);
-                video_blue  <= "0" & main_video_blue  & main_video_blue  & main_video_blue & main_video_blue(1 downto 1);  
-            else
-                video_red   <= main_video_red   & main_video_red   & main_video_red(2 downto 1);
-                video_green <= main_video_green & main_video_green & main_video_green(2 downto 1);
-                video_blue  <= main_video_blue  & main_video_blue  & main_video_blue & main_video_blue;
-                
-            end if;
-
-            video_hs     <= not main_video_hs;
-            video_vs     <= not main_video_vs;
+            video_red   <= main_video_red   & main_video_red;
+            video_green <= main_video_green & main_video_green;
+            video_blue  <= main_video_blue  & main_video_blue;
+               
+            video_hs     <= main_video_hs;
+            video_vs     <= main_video_vs;
             video_hblank <= not main_video_hblank;
             video_vblank <= not main_video_vblank;
             video_de     <= not (main_video_hblank or main_video_vblank);
@@ -567,6 +565,8 @@ begin
 -- Radar layout ROM
 --romradar_wren  <= '1' when dn_wr = '1' and dn_addr(15 downto  8) = "11100101" else '0';
 
+
+/*
          -- Bosconian ROM
          when C_DEV_BOS_CPU_ROM1 =>
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
@@ -637,7 +637,7 @@ begin
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
               qnice_dn_addr <= "11100100" & qnice_dev_addr_i(7 downto 0); 
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-
+*/
          when others => null;
       end case;
 

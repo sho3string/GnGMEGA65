@@ -31,9 +31,9 @@ entity main is
       -- Video output
       video_ce_o              : out std_logic;
       video_ce_ovl_o          : out std_logic;
-      video_red_o             : out std_logic_vector(2 downto 0);
-      video_green_o           : out std_logic_vector(2 downto 0);
-      video_blue_o            : out std_logic_vector(1 downto 0);
+      video_red_o             : out std_logic_vector(3 downto 0);
+      video_green_o           : out std_logic_vector(3 downto 0);
+      video_blue_o            : out std_logic_vector(3 downto 0);
       video_vs_o              : out std_logic;
       video_hs_o              : out std_logic;
       video_hblank_o          : out std_logic;
@@ -70,7 +70,7 @@ entity main is
       dsw_b_i                 : in  std_logic_vector(7 downto 0);
 
       dn_clk_i                : in  std_logic;
-      dn_addr_i               : in  std_logic_vector(15 downto 0);
+      dn_addr_i               : in  std_logic_vector(18 downto 0);
       dn_data_i               : in  std_logic_vector(7 downto 0);
       dn_wr_i                 : in  std_logic;
 
@@ -110,6 +110,9 @@ signal hs_pause         : std_logic;
 signal options          : std_logic_vector(1 downto 0);
 signal self_test        : std_logic;
 
+signal ce_6,ce_3,ce_1p5 : std_logic;
+signal div              : std_logic_vector(2 downto 0);
+
 constant C_MENU_OSMPAUSE     : natural := 2;
 constant C_MENU_OSMDIM       : natural := 3;
 constant C_MENU_FLIP         : natural := 9;
@@ -136,28 +139,88 @@ constant m65_help          : integer := 67; --Help key
 
 begin
    
-    audio_left_o(15) <= not audio(15);
-    audio_left_o(14 downto 0) <= signed(audio(14 downto 0));
-    audio_right_o(15) <= not audio(15);
-    audio_right_o(14 downto 0) <= signed(audio(14 downto 0));
+    audio_left_o(15 downto 0) <= signed(audio(15 downto 0));
+    audio_right_o(15 downto 0) <= audio_left_o;
    
     options(0) <= osm_control_i(C_MENU_OSMPAUSE);
     options(1) <= osm_control_i(C_MENU_OSMDIM);
     flip_screen <= osm_control_i(C_MENU_FLIP);
     
-    -- if pause_cpu is not asserted, it's safe to enter the service/test mode.
-    -- this prevents undesired state of the game when pause_cpu is asserted whilst self_test is enabled.
-    
-    process (clk_main_i)
-        begin
+    process(clk_main_i)
+    begin
         if rising_edge(clk_main_i) then
-            if  not pause_cpu then 
-                    self_test <= '1' when not keyboard_n(m65_capslock) else '0';
-            end if;
-  
+            div <= std_logic_vector(unsigned(div) + "001");
+            ce_6 <= not div(0);
+            ce_3 <= not div(1);
+            ce_1p5 <= not div(2);
         end if;
     end process;
-
+    
+    
+    i_gng : entity work.jtgng_game
+    port map (
+    
+        rst      => reset,
+        soft_rst => reset,
+        clk      => clk_main_i, -- 12Mhz main clock
+        cen12    => '1',
+        cen6     => ce_6,
+        cen3     => ce_3,
+        cen1p5   => ce_1p5,
+        
+        
+        start_button(0) => not keyboard_n(m65_1),
+        start_button(1) => not keyboard_n(m65_2),
+        coin_input(0)   => not keyboard_n(m65_5),
+        coin_input(1)   => '1',
+        
+        red             => video_red_o,
+        green           => video_green_o,
+        blue            => video_blue_o,
+        LHBL            => video_hblank_o,
+        LVBL            => video_vblank_o,
+        HS              => video_hs_o,
+        VS              => video_vs_o,
+            
+        joystick1(0)    => not joy_1_right_n_i or not keyboard_n(m65_horz_crsr),
+        joystick1(1)    => not joy_1_left_n_i or not keyboard_n(m65_left_crsr),   
+        joystick1(2)    => not joy_1_down_n_i or not keyboard_n(m65_vert_crsr),
+        joystick1(3)    => not joy_1_up_n_i or not keyboard_n(m65_up_crsr),
+        joystick1(4)    => not joy_1_fire_n_i,
+        joystick1(5)    => not keyboard_n(m65_space),
+        
+        joystick2(0)    => not joy_1_right_n_i or not keyboard_n(m65_horz_crsr),
+        joystick2(1)    => not joy_1_left_n_i or not keyboard_n(m65_left_crsr),   
+        joystick2(2)    => not joy_1_down_n_i or not keyboard_n(m65_vert_crsr),
+        joystick2(3)    => not joy_1_up_n_i or not keyboard_n(m65_up_crsr),
+        joystick2(4)    => not joy_1_fire_n_i,
+        joystick2(5)    => not keyboard_n(m65_space),
+        
+        romload_clk     =>  dn_clk_i,   -- use clock for M2M rom loading.
+	    romload_wr      =>  dn_wr_i,
+	    romload_addr    =>  dn_addr_i,
+	    romload_data    =>  dn_data_i,
+	    
+	    enable_char     => '1',
+	    enable_scr      => '1',
+	    enable_obj      => '1',
+	    
+	    -- to do later.
+	    dip_pause       => '0',
+	    dip_inv         => '0',
+	    dip_lives       => "00",
+	    dip_level       => "00",
+	    dip_bonus       => "00",
+	    dip_game_mode   => '0',
+	    dip_upright     => '1',
+	    dip_attract_snd => '0',
+	    
+	    enable_psg      => '0',
+	    enable_fm       => '0',
+	    ym_snd          => audio_left_o
+	   
+     );
+    /*
     i_bosconian : entity work.bosconian
     port map (
     
@@ -213,32 +276,7 @@ begin
     dn_data    => dn_data_i,
     dn_wr      => dn_wr_i
  );
- 
-    i_pause : entity work.pause
-     generic map (
-     
-        RW  => 3,
-        GW  => 3,
-        BW  => 2,
-        CLKSPD => 18
-        
-     )         
-     port map (
-     
-         clk_sys        => clk_main_i,
-         reset          => reset,
-         user_button    => keyboard_n(m65_p),
-         pause_request  => hs_pause,
-         options        => options,  -- not status(11 downto 10), - TODO, hookup to OSD.
-         OSD_STATUS     => '0',       -- disabled for now - TODO, to OSD
-         r              => video_red_o,
-         g              => video_green_o,
-         b              => video_blue_o,
-         pause_cpu      => pause_cpu,
-         dim_video      => dim_video_o
-         --rgb_out        TODO
-         
-      );
+ */
       
    -- @TODO: Keyboard mapping and keyboard behavior
    -- Each core is treating the keyboard in a different way: Some need low-active "matrices", some

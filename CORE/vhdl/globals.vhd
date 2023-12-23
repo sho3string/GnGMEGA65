@@ -44,7 +44,7 @@ constant QNICE_FIRMWARE           : string  := QNICE_FIRMWARE_M2M;
 -- Galaga core's clock speed
 -- Actual clock is 18_432 Mhz ( see MAME driver - galaga.cpp ).
 -- MiSTer uses 18Mhz
-constant CORE_CLK_SPEED       : natural := 18_000_000;   -- Galaga's main clock is 18 MHz 
+constant CORE_CLK_SPEED       : natural := 12_000_000;   -- Galaga's main clock is 18 MHz 
 
 -- System clock speed (crystal that is driving the FPGA) and QNICE clock speed
 -- !!! Do not touch !!!
@@ -58,7 +58,7 @@ constant QNICE_CLK_SPEED      : natural := 50_000_000;   -- a change here has de
 -- Rendering constants (in pixels)
 --    VGA_*   size of the core's target output post scandoubler
 --    FONT_*  size of one OSM character
-constant VGA_DX               : natural := 576;
+constant VGA_DX               : natural := 512;
 constant VGA_DY               : natural := 448;
 constant FONT_FILE            : string  := "../font/Anikki-16x16-m2m.rom";
 constant FONT_DX              : natural := 16;
@@ -143,22 +143,31 @@ constant C_CRTROMS_MAN           : crtrom_buf_array := ( x"EEEE", x"EEEE",
 --               b) Don't forget to zero-terminate each of your substrings of C_CRTROMS_AUTO_NAMES by adding "& ENDSTR;"
 --               c) Don't forget to finish the C_CRTROMS_AUTO array with x"EEEE"
 
-constant C_DEV_BOS_CPU_ROM1           : std_logic_vector(15 downto 0) := x"0100";     -- CPU1 ROM 
-constant C_DEV_BOS_CPU_ROM2           : std_logic_vector(15 downto 0) := x"0101";     -- CPU2 ROM 
-constant C_DEV_BOS_CPU_ROM3           : std_logic_vector(15 downto 0) := x"0102";     -- CPU3 ROM 
-constant C_DEV_BOS_GFX1               : std_logic_vector(15 downto 0) := x"0103";     -- BG GFX
-constant C_DEV_BOS_GFX2               : std_logic_vector(15 downto 0) := x"0104";     -- SPRITE GFX
-constant C_DEV_BOS_GFX3               : std_logic_vector(15 downto 0) := x"0105";     -- RADAR GFX
-constant C_DEV_BOS_SPC1               : std_logic_vector(15 downto 0) := x"0106";     -- Speech 1
-constant C_DEV_BOS_SPC2               : std_logic_vector(15 downto 0) := x"0107";     -- Speech 2
-constant C_DEV_BOS_SPC3               : std_logic_vector(15 downto 0) := x"0108";     -- Speech 3
-constant C_DEV_BOS_MCU1               : std_logic_vector(15 downto 0) := x"0109";     -- MCU1 50xx
-constant C_DEV_BOS_MCU2               : std_logic_vector(15 downto 0) := x"010A";     -- MCU2 51xx
-constant C_DEV_BOS_MCU3               : std_logic_vector(15 downto 0) := x"010B";     -- MCU3 52xx
-constant C_DEV_BOS_MCU4               : std_logic_vector(15 downto 0) := x"010C";     -- MCU4 54xx
-constant C_DEV_BOS_VIDC               : std_logic_vector(15 downto 0) := x"010D";     -- Color
+constant C_DEV_GNG_CPU_ROM1           : std_logic_vector(15 downto 0) := x"0100";     -- gg3.bin  - main cpu
+constant C_DEV_GNG_CPU_ROM2           : std_logic_vector(15 downto 0) := x"0101";     -- gg4.bin  - main cpu
+constant C_DEV_GNG_CPU_ROM3           : std_logic_vector(15 downto 0) := x"0102";     -- gg5.bin  - main cpu
+constant C_DEV_GNG_CHARS              : std_logic_vector(15 downto 0) := x"0103";     -- gg1.bin  - characters
+constant C_DEV_GNG_AUDIO              : std_logic_vector(15 downto 0) := x"0104";     -- gg2.bin  - audio cpu
+constant C_DEV_GNG_01P2               : std_logic_vector(15 downto 0) := x"0105";     -- gg9.bin  - 0-1 Plane 2
+constant C_DEV_GNG_23P2               : std_logic_vector(15 downto 0) := x"0106";     -- gg8.bin  - 2-3 Plane 2
+constant C_DEV_GNG_01P3               : std_logic_vector(15 downto 0) := x"0107";     -- gg7.bin  - 0-1 Plane 3
+constant C_DEV_GNG_02P3               : std_logic_vector(15 downto 0) := x"0108";     -- gg6.bin  - 2-3 Plane 3
+constant C_DEV_GNG_01P1               : std_logic_vector(15 downto 0) := x"0109";     -- gg11.bin - 0-1 Plane 1
+constant C_DEV_GNG_23P1               : std_logic_vector(15 downto 0) := x"010A";     -- gg10.bin - 2-3 Plane 1
+constant C_DEV_GNG_01P1_1             : std_logic_vector(15 downto 0) := x"010B";     -- gg11.bin - 0-1 Plane 1
+constant C_DEV_GNG_23P1_1             : std_logic_vector(15 downto 0) := x"010C";     -- gg10.bin - 2-3 Plane 1
+constant C_DEV_GNG_SPR0               : std_logic_vector(15 downto 0) := x"010D";     -- gg17.bin - sprites 0 Plane 1-2
+constant C_DEV_GNG_SPR1               : std_logic_vector(15 downto 0) := x"010E";     -- gg16.bin - sprites 1 Plane 1-2
+constant C_DEV_GNG_SPR2               : std_logic_vector(15 downto 0) := x"010F";     -- gg15.bin - sprites 2 Plane 1-2
+constant C_DEV_GNG_SPR2_1             : std_logic_vector(15 downto 0) := x"010F";     -- gg15.bin - sprites 2 Plane 1-2
+constant C_DEV_GNG_SPR3               : std_logic_vector(15 downto 0) := x"0110";     -- gg14.bin - sprites 0 Plane 3-4
+constant C_DEV_GNG_SPR4               : std_logic_vector(15 downto 0) := x"0111";     -- gg13.bin - sprites 1 Plane 3-4
+constant C_DEV_GNG_SPR5               : std_logic_vector(15 downto 0) := x"0113";     -- gg12.bin - sprites 2 Plane 3-4
+constant C_DEV_GNG_SPR5_1             : std_logic_vector(15 downto 0) := x"0114";     -- gg12.bin - sprites 2 Plane 3-4
 
--- GALAGA core specific ROMs
+-- GALAGA core specific ROMs - to do
+
+-- we ctually don't have enough bram to make this game, to complete on R5 board
 constant ROM1_MAIN_CPU_ROM            : string  := "arcade/bosconian/rom1.rom" & ENDSTR;    -- z80 cpu 1
 constant ROM2_SUB_CPU_ROM             : string  := "arcade/bosconian/rom2.rom" & ENDSTR;    -- z80 sub cpu
 constant ROM3_SND_CPU_ROM             : string  := "arcade/bosconian/rom3.rom" & ENDSTR;    -- z80 snd cpu
@@ -198,6 +207,7 @@ constant C_CRTROMS_AUTO_NAMES    : string  := ROM1_MAIN_CPU_ROM & ROM2_SUB_CPU_R
                                               NAMCO50XX_MCU_ROM & NAMCO51XX_MCU_ROM & NAMCO52XX_MCU_ROM & NAMCO54XX_MCU_ROM &
                                               VIDC_PROM &
                                               ENDSTR;
+                                              
 constant C_CRTROMS_AUTO          : crtrom_buf_array := ( 
       C_CRTROMTYPE_DEVICE, C_DEV_BOS_CPU_ROM1, C_CRTROMTYPE_MANDATORY, CPU_ROM1_MAIN_START,
       C_CRTROMTYPE_DEVICE, C_DEV_BOS_CPU_ROM2, C_CRTROMTYPE_MANDATORY, CPU_ROM2_MAIN_START,

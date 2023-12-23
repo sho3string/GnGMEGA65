@@ -1,14 +1,15 @@
 -------------------------------------------------------------------------------------------------------------
--- Galaga Arcade Core for the MEGA65 
+-- GnG Arcade Core for the MEGA65 
 --
 -- Clock Generator using the Xilinx specific MMCME2_ADV:
 --
--- The MiSTer Galaga core needs these clocks:
+-- The MiSTer GnG core needs these clocks:
 --
---    18 MHz main clock
+--    24 MHz main clock
 --    48 MHz video clock
+--    12 Mhz clock
 --
--- Galaga port done by Samuel P ( Muse ) in 2023
+-- gng port done by Samuel P ( Muse ) in 2024
 -- MiSTer2MEGA65 done by sy2002 and MJoergen in 2022 and licensed under GPL v3
 -------------------------------------------------------------------------------------------------------------
 
@@ -26,11 +27,15 @@ entity clk is
       sys_clk_i       : in  std_logic;   -- expects 100 MHz
       sys_rstn_i      : in  std_logic;   -- Asynchronous, asserted low
 
-      main_clk_o      : out std_logic;   -- Galaga's 18 MHz main clock
-      main_rst_o      : out std_logic;   -- Galaga's reset, synchronized
+      clk_24_o        : out std_logic;   -- 24Mhz sys  clock
+      clk_24_rst_o    : out std_logic;   -- reset, synchronized
       
-      video_clk_o     : out std_logic;   -- video clock 48 MHz
-      video_rst_o     : out std_logic    -- video reset, synchronized
+      clk48_clk_o     : out std_logic;   -- clock 48 MHz
+      clk48_rst_o     : out std_logic;   -- video reset, synchronized
+      
+      main_clk_o      : out std_logic;   -- 12 Mhz
+      main_rst_o      : out std_logic    -- reset, synchronized
+      
    );
 end entity clk;
 
@@ -38,8 +43,9 @@ architecture rtl of clk is
 
 signal clkfb_main         : std_logic;
 signal clkfb_main_mmcm    : std_logic;
-signal main_clk_mmcm      : std_logic;
-signal video_clk_mmcm     : std_logic;
+signal clk24_clk_mmcm     : std_logic;
+signal clk48_clk_mmcm     : std_logic;
+signal main_clk_mmcm     : std_logic;
 
 signal main_locked        : std_logic;
 
@@ -57,24 +63,30 @@ begin
          STARTUP_WAIT         => FALSE,
          CLKIN1_PERIOD        => 10.0,       -- INPUT @ 100 MHz
          REF_JITTER1          => 0.010,
+         REF_JITTER2          => 0.010,
          DIVCLK_DIVIDE        => 5,
-         CLKFBOUT_MULT_F      => 36.000,     -- (100 MHz x 36) / 5 = 720 MHz
+         CLKFBOUT_MULT_F      => 48.000,     -- (100 MHz x 48) / 5 = 960 MHz
          CLKFBOUT_PHASE       => 0.000,
          CLKFBOUT_USE_FINE_PS => FALSE,
-         CLKOUT0_DIVIDE_F     => 40.000,     -- 720 MHz / 40.000 = 18 MHz
+         CLKOUT0_DIVIDE_F     => 40.000,     -- 960 MHz / 20.000 = 48 MHz
          CLKOUT0_PHASE        => 0.000,
          CLKOUT0_DUTY_CYCLE   => 0.500,
          CLKOUT0_USE_FINE_PS  => FALSE,
-         CLKOUT1_DIVIDE       => 15,         -- 720 MHz / 15 = 48 MHz
+         CLKOUT1_DIVIDE       => 40,         -- 960 MHz / 40 = 24 MHz
          CLKOUT1_PHASE        => 0.000,
          CLKOUT1_DUTY_CYCLE   => 0.500,
-         CLKOUT1_USE_FINE_PS  => FALSE         
+         CLKOUT1_USE_FINE_PS  => FALSE,
+         CLKOUT2_DIVIDE       => 80,         -- 960 MHz / 40 = 24 MHz
+         CLKOUT2_PHASE        => 0.000,
+         CLKOUT2_DUTY_CYCLE   => 0.500,
+         CLKOUT2_USE_FINE_PS  => FALSE       
       )
       port map (
          -- Output clocks
          CLKFBOUT            => clkfb_main_mmcm,
-         CLKOUT0             => main_clk_mmcm,
-         CLKOUT1             => video_clk_mmcm,
+         CLKOUT0             => clk48_clk_mmcm,
+         CLKOUT1             => clk24_clk_mmcm,
+         CLKOUT2             => main_clk_mmcm,
          -- Input clock control
          CLKFBIN             => clkfb_main,
          CLKIN1              => sys_clk_i,
@@ -112,45 +124,63 @@ begin
          O => clkfb_main
       );
 
-   main_clk_bufg : BUFG
+   clk24_clk_bufg : BUFG
       port map (
-         I => main_clk_mmcm,
-         O => main_clk_o
+         I => clk24_clk_mmcm,
+         O => clk_24_o
       );
       
    video_clk_bufg : BUFG
       port map (
-         I => video_clk_mmcm,
-         O => video_clk_o
+         I => clk48_clk_mmcm,
+         O => clk48_clk_o
       );
 
+   clk12_clk_bufg : BUFG
+      port map (
+         I => main_clk_mmcm,
+         O => main_clk_o
+      );
    -------------------------------------
    -- Reset generation
    -------------------------------------
 
-   i_xpm_cdc_async_rst_main : xpm_cdc_async_rst
+   i_xpm_cdc_async_rst_clk12 : xpm_cdc_async_rst
       generic map (
          RST_ACTIVE_HIGH => 1,
          DEST_SYNC_FF    => 10
       )
       port map (
          src_arst  => not (main_locked and sys_rstn_i),   -- 1-bit input: Source reset signal.
-         dest_clk  => main_clk_o,       -- 1-bit input: Destination clock.
-         dest_arst => main_rst_o        -- 1-bit output: src_rst synchronized to the destination clock domain.
+         dest_clk  => main_clk_o,          -- 1-bit input: Destination clock.
+         dest_arst => main_rst_o       -- 1-bit output: src_rst synchronized to the destination clock domain.
+                                         -- This output is registered.
+      );
+      
+   i_xpm_cdc_async_rst_clk24 : xpm_cdc_async_rst
+      generic map (
+         RST_ACTIVE_HIGH => 1,
+         DEST_SYNC_FF    => 10
+      )
+      port map (
+         src_arst  => not (main_locked and sys_rstn_i),   -- 1-bit input: Source reset signal.
+         dest_clk  => clk_24_o,         -- 1-bit input: Destination clock.
+         dest_arst => clk_24_rst_o      -- 1-bit output: src_rst synchronized to the destination clock domain.
                                         -- This output is registered.
       );
       
-   i_xpm_cdc_async_rst_video : xpm_cdc_async_rst
+   i_xpm_cdc_async_rst_clk48 : xpm_cdc_async_rst
       generic map (
          RST_ACTIVE_HIGH => 1,
          DEST_SYNC_FF    => 10
       )
       port map (
          src_arst  => not (main_locked and sys_rstn_i),   -- 1-bit input: Source reset signal.
-         dest_clk  => video_clk_o,       -- 1-bit input: Destination clock.
-         dest_arst => video_rst_o        -- 1-bit output: src_rst synchronized to the destination clock domain.
+         dest_clk  => clk48_clk_o,       -- 1-bit input: Destination clock.
+         dest_arst => clk48_rst_o        -- 1-bit output: src_rst synchronized to the destination clock domain.
                                          -- This output is registered.
       );
+     
       
 end architecture rtl;
 
