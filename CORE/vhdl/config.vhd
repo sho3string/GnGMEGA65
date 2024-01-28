@@ -185,8 +185,8 @@ constant SEL_CFG_FILE      : std_logic_vector(15 downto 0) := x"0101";
 
 -- START YOUR CONFIGURATION BELOW THIS LINE
 
-constant DIR_START         : string := "/arcade/bosconian";
-constant CFG_FILE          : string := "/arcade/bosconian/boscfg";
+constant DIR_START         : string := "/arcade/gng";
+constant CFG_FILE          : string := "/arcade/gng/gngcfg";
 
 --------------------------------------------------------------------------------------------------------------------
 -- General configuration settings: Reset, Pause, OSD behavior, Ascal, etc. (Selector 0x0110)

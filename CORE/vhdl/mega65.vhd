@@ -436,47 +436,6 @@ begin
         end if;
     end process;
     
-        
-    
-    -- The video output from the core has the following (empirically determined)
-    -- parameters:
-    -- CLK_KHZ     => 6000,       -- 6 MHz
-    -- H_PIXELS    => 288,        -- horizontal display width in pixels
-    -- V_PIXELS    => 224,        -- vertical display width in rows
-    -- H_PULSE     => 29,         -- horizontal sync pulse width in pixels
-    -- H_BP        => 44,         -- horizontal back porch width in pixels
-    -- H_FP        => 23,         -- horizontal front porch width in pixels
-    -- V_PULSE     => 8,          -- vertical sync pulse width in rows
-    -- V_BP        => 12,         -- vertical back porch width in rows
-    -- V_FP        => 20,         -- vertical front porch width in rows
-    -- This corresponds to a horizontal sync frequency of 15.625 kHz
-    -- and a vertical sync frequency of 59.19 Hz.
-    --
-    -- After screen rotation the visible part therefore has a size of 224x288 pixels.
-    -- In order to display this image we need a screen resolution that is large enough.
-    -- I've chosen a down-scaled version of the standard 576p. The important values here
-    -- are the horizontal sync frequency of 15.625 kHz and the fact that I'm keeping
-    -- the pixel clock rate of 6 MHz.
-    -- The calculation is as follows: The standard 576p has the following parameters:
-    -- (see M2M/vhdl/av_pipeline/video_modes_pkg.vhd):
-    -- * pixel clock rate of 27 MHz.
-    -- * horizontal sync frequency of 31.25 kHz.
-    -- * horizontal scan line time of 1000/31.25 = 32 us.
-    -- * horizontal visible pixels 720.
-    -- * horizontal visible time 720/27 = 26.67 us.
-    -- In a non-scandoubled domain the numbers change as follows:
-    -- * horizontal sync frequency of 31.25/2 = 15.625 kHz.
-    -- * horizontal scan line time of 32*2 = 64 us.
-    -- * horizontal visible time 26.67*2 = 53.33 us.
-    -- Since we are sticking with a 6 MHz pixel rate, we get:
-    -- * horizontal visible pixels 53.33*6 = 320.
-    -- Therefore, we have a visible screen area of 320x288 pixels, and our rotated image
-    -- of 224x288 must be centered in here. This leaves a border of (320-224)/2 = 48
-    -- pixels on either side.
-    -- Nevertheless, on my VGA monitor, this video signal is recognized as
-    -- 720x288 @ 50Hz.
-   
-  
    ---------------------------------------------------------------------------------------------
    -- Audio and video settings (QNICE clock domain)
    ---------------------------------------------------------------------------------------------
@@ -541,103 +500,50 @@ begin
       qnice_dn_addr    <= (others => '0');
       qnice_dn_data    <= (others => '0');
 
+
+ -- GnG Capcom
+    -- cpu  00000 14000 ( combine all roms into 1 ).
+    -- chr  14000 04000
+    -- snd  18000 08000
+    -- scr1 20000 08000
+    --scr2 28000 08000
+    --scr3 30000 08000
+    -- ---- 38000 08000
+    -- obj1 40000 10000
+    -- obj2 50000 10000
+    
       case qnice_dev_id_i is
-
-
--- CPU Program ROMs
---rom1_wren      <= '1' when dn_wr = '1' and dn_addr(15 downto 14) = "00"       else '0';
---rom2_wren      <= '1' when dn_wr = '1' and dn_addr(15 downto 13) = "010"      else '0';
---rom3_wren      <= '1' when dn_wr = '1' and dn_addr(15 downto 12) = "0110"     else '0';
--- Namco Character/Sprite Layout ROMs
---romchar_wren   <= '1' when dn_wr = '1' and dn_addr(15 downto 12) = "0111"     else '0';
---romsprite_wren <= '1' when dn_wr = '1' and dn_addr(15 downto 12) = "1000"     else '0';
--- ROMs for digitized speech; used by 52xx
---romvoice0_wren <= '1' when dn_wr = '1' and dn_addr(15 downto 12) = "1010"     else '0';
---romvoice1_wren <= '1' when dn_wr = '1' and dn_addr(15 downto 12) = "1011"     else '0';
---romvoice2_wren <= '1' when dn_wr = '1' and dn_addr(15 downto 12) = "1100"     else '0';
--- Namco custom MCU ROMs
---rom50_wren     <= '1' when dn_wr = '1' and dn_addr(15 downto 11) = "11010"    else '0';
---rom51_wren     <= '1' when dn_wr = '1' and dn_addr(15 downto 10) = "110110"   else '0';
---rom52_wren     <= '1' when dn_wr = '1' and dn_addr(15 downto 10) = "110111"   else '0';
---rom54_wren     <= '1' when dn_wr = '1' and dn_addr(15 downto 10) = "111000"   else '0';
--- Color lookup table PROM
---romcolor_wren  <= '1' when dn_wr = '1' and dn_addr(15 downto  8) = "11100100" else '0';
--- Radar layout ROM
---romradar_wren  <= '1' when dn_wr = '1' and dn_addr(15 downto  8) = "11100101" else '0';
-
-
-/*
-         -- Bosconian ROM
-         when C_DEV_BOS_CPU_ROM1 =>
+    
+        when C_DEV_GNG_CPU_ROM1 => -- 81919 bytes / 00010011111111111111
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "00" & qnice_dev_addr_i(13 downto 0);   
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-
-         when C_DEV_BOS_CPU_ROM2 =>
+              qnice_dn_addr <= "00" & qnice_dev_addr_i(16 downto 0);    -- 0x0000 - 0x13fff  ( 00 00000000000000000 to 00 10011111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);            
+              
+        when C_DEV_GNG_CHARS  =>  -- 16384 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "010" & qnice_dev_addr_i(12 downto 0);  
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-
-         when C_DEV_BOS_CPU_ROM3 =>
+              qnice_dn_addr <= "00101" & qnice_dev_addr_i(13 downto 0); -- 0x14000 -0x17fff  ( 000101 00000000000000 to 000101 11111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);  
+              
+        when C_DEV_GNG_AUDIO  =>  -- 32768 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "0110" & qnice_dev_addr_i(11 downto 0); 
+              qnice_dn_addr <= "0011" & qnice_dev_addr_i(14 downto 0);  -- 0x18000 -0x1ffff  ( 00011 000000000000000 to 00011 111111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);    
+        
+        when C_DEV_GNG_01P2  =>  -- 16384 bytes 
+              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
+              qnice_dn_addr <= "00100" & qnice_dev_addr_i(13 downto 0);  -- 0x20000 -0x23fff  ( 001000 00000000000000 to 001000 11111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
               
-         when C_DEV_BOS_GFX1 =>
+        /*when C_DEV_GNG_23P2  =>  -- 16384 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "0111" & qnice_dev_addr_i(11 downto 0); 
+              qnice_dn_addr <= "001001" & qnice_dev_addr_i(13 downto 0); -- 0x24000 -0x27fff  ( 001001 00000000000000 to 001001 11111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
               
-         when C_DEV_BOS_GFX2 =>
+        when C_DEV_GNG_01P3  =>  -- 16384 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "1000" & qnice_dev_addr_i(11 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-             
-         when C_DEV_BOS_GFX3 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "11100101" & qnice_dev_addr_i(7 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-
-         when C_DEV_BOS_SPC1 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "1010" & qnice_dev_addr_i(11 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0); 
-              
-         when C_DEV_BOS_SPC2 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "1011" & qnice_dev_addr_i(11 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0); 
-              
-         when C_DEV_BOS_SPC3 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "1100" & qnice_dev_addr_i(11 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0); 
-              
-         when C_DEV_BOS_MCU1 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "11010" & qnice_dev_addr_i(10 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-
-         when C_DEV_BOS_MCU2 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "110110" & qnice_dev_addr_i(9 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-              
-         when C_DEV_BOS_MCU3 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "110111" & qnice_dev_addr_i(9 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-              
-         when C_DEV_BOS_MCU4 =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "111000" & qnice_dev_addr_i(9 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-              
-         when C_DEV_BOS_VIDC =>
-              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "11100100" & qnice_dev_addr_i(7 downto 0); 
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
-*/
+              qnice_dn_addr <= "00101" & qnice_dev_addr_i(13 downto 0); -- 0x28000 -0x2bfff  ( 00101 000000000000000 to 001001 11111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);*/
+            
          when others => null;
       end case;
 

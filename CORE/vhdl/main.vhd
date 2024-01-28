@@ -111,7 +111,8 @@ signal options          : std_logic_vector(1 downto 0);
 signal self_test        : std_logic;
 
 signal ce_6,ce_3,ce_1p5 : std_logic;
-signal div              : std_logic_vector(2 downto 0);
+--signal div              : std_logic_vector(2 downto 0);
+signal div              : unsigned(2 downto 0) := (others => '0');
 
 constant C_MENU_OSMPAUSE     : natural := 2;
 constant C_MENU_OSMDIM       : natural := 3;
@@ -137,6 +138,11 @@ constant m65_s             : integer := 13; --Service 1
 constant m65_capslock      : integer := 72; --Service Mode
 constant m65_help          : integer := 67; --Help key
 
+-- MiSTer clocks
+--.outclk_0(clk_vid),   48Mhz
+--.outclk_1(clk_sys),   24Mhz
+--.outclk_2(clk_12)     12Mhz
+
 begin
    
     audio_left_o(15 downto 0) <= signed(audio(15 downto 0));
@@ -149,7 +155,8 @@ begin
     process(clk_main_i)
     begin
         if rising_edge(clk_main_i) then
-            div <= std_logic_vector(unsigned(div) + "001");
+            --div <= std_logic_vector(unsigned(div) + "001");
+            div <= div + 1;
             ce_6 <= not div(0);
             ce_3 <= not div(1);
             ce_1p5 <= not div(2);
@@ -206,7 +213,7 @@ begin
 	    enable_obj      => '1',
 	    
 	    -- to do later.
-	    dip_pause       => '0',
+	    dip_pause       => '1',
 	    dip_inv         => '0',
 	    dip_lives       => "00",
 	    dip_level       => "00",

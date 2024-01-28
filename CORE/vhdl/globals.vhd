@@ -58,7 +58,7 @@ constant QNICE_CLK_SPEED      : natural := 50_000_000;   -- a change here has de
 -- Rendering constants (in pixels)
 --    VGA_*   size of the core's target output post scandoubler
 --    FONT_*  size of one OSM character
-constant VGA_DX               : natural := 512;
+constant VGA_DX               : natural := 1024;
 constant VGA_DY               : natural := 448;
 constant FONT_FILE            : string  := "../font/Anikki-16x16-m2m.rom";
 constant FONT_DX              : natural := 16;
@@ -143,88 +143,101 @@ constant C_CRTROMS_MAN           : crtrom_buf_array := ( x"EEEE", x"EEEE",
 --               b) Don't forget to zero-terminate each of your substrings of C_CRTROMS_AUTO_NAMES by adding "& ENDSTR;"
 --               c) Don't forget to finish the C_CRTROMS_AUTO array with x"EEEE"
 
-constant C_DEV_GNG_CPU_ROM1           : std_logic_vector(15 downto 0) := x"0100";     -- gg3.bin  - main cpu
-constant C_DEV_GNG_CPU_ROM2           : std_logic_vector(15 downto 0) := x"0101";     -- gg4.bin  - main cpu
-constant C_DEV_GNG_CPU_ROM3           : std_logic_vector(15 downto 0) := x"0102";     -- gg5.bin  - main cpu
-constant C_DEV_GNG_CHARS              : std_logic_vector(15 downto 0) := x"0103";     -- gg1.bin  - characters
-constant C_DEV_GNG_AUDIO              : std_logic_vector(15 downto 0) := x"0104";     -- gg2.bin  - audio cpu
-constant C_DEV_GNG_01P2               : std_logic_vector(15 downto 0) := x"0105";     -- gg9.bin  - 0-1 Plane 2
-constant C_DEV_GNG_23P2               : std_logic_vector(15 downto 0) := x"0106";     -- gg8.bin  - 2-3 Plane 2
-constant C_DEV_GNG_01P3               : std_logic_vector(15 downto 0) := x"0107";     -- gg7.bin  - 0-1 Plane 3
-constant C_DEV_GNG_02P3               : std_logic_vector(15 downto 0) := x"0108";     -- gg6.bin  - 2-3 Plane 3
-constant C_DEV_GNG_01P1               : std_logic_vector(15 downto 0) := x"0109";     -- gg11.bin - 0-1 Plane 1
-constant C_DEV_GNG_23P1               : std_logic_vector(15 downto 0) := x"010A";     -- gg10.bin - 2-3 Plane 1
-constant C_DEV_GNG_01P1_1             : std_logic_vector(15 downto 0) := x"010B";     -- gg11.bin - 0-1 Plane 1
-constant C_DEV_GNG_23P1_1             : std_logic_vector(15 downto 0) := x"010C";     -- gg10.bin - 2-3 Plane 1
-constant C_DEV_GNG_SPR0               : std_logic_vector(15 downto 0) := x"010D";     -- gg17.bin - sprites 0 Plane 1-2
-constant C_DEV_GNG_SPR1               : std_logic_vector(15 downto 0) := x"010E";     -- gg16.bin - sprites 1 Plane 1-2
-constant C_DEV_GNG_SPR2               : std_logic_vector(15 downto 0) := x"010F";     -- gg15.bin - sprites 2 Plane 1-2
-constant C_DEV_GNG_SPR2_1             : std_logic_vector(15 downto 0) := x"010F";     -- gg15.bin - sprites 2 Plane 1-2
-constant C_DEV_GNG_SPR3               : std_logic_vector(15 downto 0) := x"0110";     -- gg14.bin - sprites 0 Plane 3-4
-constant C_DEV_GNG_SPR4               : std_logic_vector(15 downto 0) := x"0111";     -- gg13.bin - sprites 1 Plane 3-4
-constant C_DEV_GNG_SPR5               : std_logic_vector(15 downto 0) := x"0113";     -- gg12.bin - sprites 2 Plane 3-4
-constant C_DEV_GNG_SPR5_1             : std_logic_vector(15 downto 0) := x"0114";     -- gg12.bin - sprites 2 Plane 3-4
+constant C_DEV_GNG_CPU_ROM1           : std_logic_vector(15 downto 0) := x"0100";     -- rom1.bin  - main cpu
+constant C_DEV_GNG_CHARS              : std_logic_vector(15 downto 0) := x"0101";     -- gg1.bin  - characters
+constant C_DEV_GNG_AUDIO              : std_logic_vector(15 downto 0) := x"0102";     -- gg2.bin  - audio cpu
+constant C_DEV_GNG_01P2               : std_logic_vector(15 downto 0) := x"0103";     -- gg9.bin  - 0-1 Plane 2
+constant C_DEV_GNG_23P2               : std_logic_vector(15 downto 0) := x"0104";     -- gg8.bin  - 2-3 Plane 2
+constant C_DEV_GNG_01P3               : std_logic_vector(15 downto 0) := x"0105";     -- gg7.bin  - 0-1 Plane 3
+constant C_DEV_GNG_02P3               : std_logic_vector(15 downto 0) := x"0106";     -- gg6.bin  - 2-3 Plane 3
+constant C_DEV_GNG_01P1               : std_logic_vector(15 downto 0) := x"0107";     -- gg11.bin - 0-1 Plane 1
+constant C_DEV_GNG_23P1               : std_logic_vector(15 downto 0) := x"0108";     -- gg10.bin - 2-3 Plane 1
+constant C_DEV_GNG_01P1_1             : std_logic_vector(15 downto 0) := x"0109";     -- gg11.bin - 0-1 Plane 1
+constant C_DEV_GNG_23P1_1             : std_logic_vector(15 downto 0) := x"010a";     -- gg10.bin - 2-3 Plane 1
+constant C_DEV_GNG_SPR0               : std_logic_vector(15 downto 0) := x"010b";     -- gg17.bin - sprites 0 Plane 1-2
+constant C_DEV_GNG_SPR1               : std_logic_vector(15 downto 0) := x"010c";     -- gg16.bin - sprites 1 Plane 1-2
+constant C_DEV_GNG_SPR2               : std_logic_vector(15 downto 0) := x"010d";     -- gg15.bin - sprites 2 Plane 1-2
+constant C_DEV_GNG_SPR2_1             : std_logic_vector(15 downto 0) := x"010e";     -- gg15.bin - sprites 2 Plane 1-2
+constant C_DEV_GNG_SPR3               : std_logic_vector(15 downto 0) := x"010f";     -- gg14.bin - sprites 0 Plane 3-4
+constant C_DEV_GNG_SPR4               : std_logic_vector(15 downto 0) := x"0110";     -- gg13.bin - sprites 1 Plane 3-4
+constant C_DEV_GNG_SPR5               : std_logic_vector(15 downto 0) := x"0111";     -- gg12.bin - sprites 2 Plane 3-4
+constant C_DEV_GNG_SPR5_1             : std_logic_vector(15 downto 0) := x"0112";     -- gg12.bin - sprites 2 Plane 3-4
 
 -- GALAGA core specific ROMs - to do
 
 -- we ctually don't have enough bram to make this game, to complete on R5 board
-constant ROM1_MAIN_CPU_ROM            : string  := "arcade/bosconian/rom1.rom" & ENDSTR;    -- z80 cpu 1
-constant ROM2_SUB_CPU_ROM             : string  := "arcade/bosconian/rom2.rom" & ENDSTR;    -- z80 sub cpu
-constant ROM3_SND_CPU_ROM             : string  := "arcade/bosconian/rom3.rom" & ENDSTR;    -- z80 snd cpu
-constant GFX1_BG_ROM                  : string  := "arcade/bosconian/gfx1.rom" & ENDSTR;    -- bg layer shapes
-constant GFX2_FG_ROM                  : string  := "arcade/bosconian/gfx2.rom" & ENDSTR;    -- sprite shapes
-constant GFX3_RR_ROM                  : string  := "arcade/bosconian/gfx3.rom" & ENDSTR;    -- radar shapes
-constant SPCH1_ROM                    : string  := "arcade/bosconian/bos1_9.5n" & ENDSTR;   -- speech 1
-constant SPCH2_ROM                    : string  := "arcade/bosconian/bos1_10.5m" & ENDSTR;  -- speech 2
-constant SPCH3_ROM                    : string  := "arcade/bosconian/bos1_11.5k" & ENDSTR;  -- speech 3
-constant NAMCO50XX_MCU_ROM            : string  := "arcade/bosconian/50xx.bin" & ENDSTR;    -- 50xx mcu
-constant NAMCO51XX_MCU_ROM            : string  := "arcade/bosconian/51xx.bin" & ENDSTR;    -- 51xx mcu
-constant NAMCO52XX_MCU_ROM            : string  := "arcade/bosconian/52xx.bin" & ENDSTR;    -- 52xx mcu
-constant NAMCO54XX_MCU_ROM            : string  := "arcade/bosconian/54xx.bin" & ENDSTR;    -- 54xx mcu
-constant VIDC_PROM                    : string  := "arcade/bosconian/bos1-5.4m" & ENDSTR;   -- Color PROM
-
+constant ROM1_MAIN_CPU_ROM            : string  := "arcade/gng/rom1.bin" & ENDSTR;
+constant ROM1_CHR_ROM                 : string  := "arcade/gng/gg1.bin" & ENDSTR;
+constant ROM1_AUD_ROM                 : string  := "arcade/gng/gg2.bin" & ENDSTR;
+constant ROM1_TILE_ROM                : string  := "arcade/gng/gg9.bin" & ENDSTR;
+constant ROM2_TILE_ROM                : string  := "arcade/gng/gg8.bin" & ENDSTR;
+constant ROM3_TILE_ROM                : string  := "arcade/gng/gg7.bin" & ENDSTR;
+constant ROM4_TILE_ROM                : string  := "arcade/gng/gg6.bin" & ENDSTR;
+constant ROM5_TILE_ROM                : string  := "arcade/gng/gg11.bin" & ENDSTR;
+constant ROM6_TILE_ROM                : string  := "arcade/gng/gg10.bin" & ENDSTR;
+constant ROM7_TILE_ROM                : string  := "arcade/gng/gg11.bin" & ENDSTR;
+constant ROM8_TILE_ROM                : string  := "arcade/gng/gg12.bin" & ENDSTR;
+constant ROM1_SPR_ROM                 : string  := "arcade/gng/gg17.bin" & ENDSTR;
+constant ROM2_SPR_ROM                 : string  := "arcade/gng/gg16.bin" & ENDSTR;
+constant ROM3_SPR_ROM                 : string  := "arcade/gng/gg15.bin" & ENDSTR;
+constant ROM4_SPR_ROM                 : string  := "arcade/gng/gg15.bin" & ENDSTR;
+constant ROM5_SPR_ROM                 : string  := "arcade/gng/gg14.bin" & ENDSTR;
+constant ROM6_SPR_ROM                 : string  := "arcade/gng/gg13.bin" & ENDSTR;
+constant ROM7_SPR_ROM                 : string  := "arcade/gng/gg12.bin" & ENDSTR;
+constant ROM8_SPR_ROM                 : string  := "arcade/gng/gg12.bin" & ENDSTR;
 
 constant CPU_ROM1_MAIN_START          : std_logic_vector(15 downto 0) := X"0000";
-constant CPU_ROM2_MAIN_START          : std_logic_vector(15 downto 0) := CPU_ROM1_MAIN_START + ROM1_MAIN_CPU_ROM'length;
-constant CPU_ROM3_MAIN_START          : std_logic_vector(15 downto 0) := CPU_ROM2_MAIN_START + ROM2_SUB_CPU_ROM'length;
-constant GFX1_MAIN_START              : std_logic_vector(15 downto 0) := CPU_ROM3_MAIN_START + ROM3_SND_CPU_ROM'length;
-constant GFX2_MAIN_START              : std_logic_vector(15 downto 0) := GFX1_MAIN_START + GFX1_BG_ROM'length;
-constant GFX3_MAIN_START              : std_logic_vector(15 downto 0) := GFX2_MAIN_START + GFX2_FG_ROM'length;
-constant SPCH1_MAIN_START             : std_logic_vector(15 downto 0) := GFX3_MAIN_START + GFX3_RR_ROM'length;
-constant SPCH2_MAIN_START             : std_logic_vector(15 downto 0) := SPCH1_MAIN_START + SPCH1_ROM'length;
-constant SPCH3_MAIN_START             : std_logic_vector(15 downto 0) := SPCH2_MAIN_START + SPCH2_ROM'length;
-constant MCU1_MAIN_START              : std_logic_vector(15 downto 0) := SPCH3_MAIN_START + SPCH3_ROM'length;
-constant MCU2_MAIN_START              : std_logic_vector(15 downto 0) := MCU1_MAIN_START + NAMCO50XX_MCU_ROM'length;
-constant MCU3_MAIN_START              : std_logic_vector(15 downto 0) := MCU2_MAIN_START + NAMCO51XX_MCU_ROM'length;
-constant MCU4_MAIN_START              : std_logic_vector(15 downto 0) := MCU3_MAIN_START + NAMCO52XX_MCU_ROM'length;
-constant VIDC_MAIN_START              : std_logic_vector(15 downto 0) := MCU4_MAIN_START + NAMCO54XX_MCU_ROM'length;
+constant ROM1_CHR_ROM_START           : std_logic_vector(15 downto 0) := CPU_ROM1_MAIN_START + ROM1_MAIN_CPU_ROM'length;
+constant ROM1_AUD_ROM_START           : std_logic_vector(15 downto 0) := ROM1_CHR_ROM_START  + ROM1_CHR_ROM'length;
+constant ROM1_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM1_AUD_ROM_START  + ROM1_AUD_ROM'length;
+constant ROM2_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM1_TILE_ROM_START + ROM1_TILE_ROM'length;
+constant ROM3_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM2_TILE_ROM_START + ROM2_TILE_ROM'length;
+constant ROM4_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM3_TILE_ROM_START + ROM3_TILE_ROM'length;
+constant ROM5_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM4_TILE_ROM_START + ROM4_TILE_ROM'length;
+constant ROM6_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM5_TILE_ROM_START + ROM5_TILE_ROM'length;
+constant ROM7_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM6_TILE_ROM_START + ROM6_TILE_ROM'length;
+constant ROM8_TILE_ROM_START          : std_logic_vector(15 downto 0) := ROM7_TILE_ROM_START + ROM7_TILE_ROM'length;
+constant ROM1_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM8_TILE_ROM_START + ROM8_TILE_ROM'length;
+constant ROM2_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM1_SPR_ROM_START  + ROM1_SPR_ROM'length;
+constant ROM3_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM2_SPR_ROM_START  + ROM2_SPR_ROM'length;
+constant ROM4_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM3_SPR_ROM_START  + ROM3_SPR_ROM'length;
+constant ROM5_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM4_SPR_ROM_START  + ROM4_SPR_ROM'length;
+constant ROM6_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM5_SPR_ROM_START  + ROM5_SPR_ROM'length;
+constant ROM7_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM6_SPR_ROM_START  + ROM6_SPR_ROM'length;
+constant ROM8_SPR_ROM_START           : std_logic_vector(15 downto 0) := ROM7_SPR_ROM_START  + ROM7_SPR_ROM'length;
 
 -- M2M framework constants
-constant C_CRTROMS_AUTO_NUM      : natural := 14;                                       -- Amount of automatically loadable ROMs and carts, if more than 3: also adjust CRTROM_MAN_MAX in M2M/rom/shell_vars.asm, Needs to be in sync with config.vhd. Maximum is 16
-constant C_CRTROMS_AUTO_NAMES    : string  := ROM1_MAIN_CPU_ROM & ROM2_SUB_CPU_ROM & ROM3_SND_CPU_ROM & 
-                                              GFX1_BG_ROM & GFX2_FG_ROM & GFX3_RR_ROM &
-                                              SPCH1_ROM & SPCH2_ROM & SPCH3_ROM &
-                                              NAMCO50XX_MCU_ROM & NAMCO51XX_MCU_ROM & NAMCO52XX_MCU_ROM & NAMCO54XX_MCU_ROM &
-                                              VIDC_PROM &
+constant C_CRTROMS_AUTO_NUM      : natural := 19;                                       -- Amount of automatically loadable ROMs and carts, if more than 3: also adjust CRTROM_MAN_MAX in M2M/rom/shell_vars.asm, Needs to be in sync with config.vhd. Maximum is 16
+constant C_CRTROMS_AUTO_NAMES    : string  := ROM1_MAIN_CPU_ROM &
+                                              ROM1_CHR_ROM &
+                                              ROM1_AUD_ROM  &
+                                              ROM1_TILE_ROM & ROM2_TILE_ROM & ROM3_TILE_ROM & ROM4_TILE_ROM  &
+                                              ROM5_TILE_ROM & ROM6_TILE_ROM & ROM7_TILE_ROM & ROM8_TILE_ROM  &
+                                              ROM1_SPR_ROM & ROM2_SPR_ROM & ROM3_SPR_ROM & ROM4_SPR_ROM  &
+                                              ROM5_SPR_ROM & ROM6_SPR_ROM & ROM7_SPR_ROM & ROM8_SPR_ROM  &
                                               ENDSTR;
                                               
 constant C_CRTROMS_AUTO          : crtrom_buf_array := ( 
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_CPU_ROM1, C_CRTROMTYPE_MANDATORY, CPU_ROM1_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_CPU_ROM2, C_CRTROMTYPE_MANDATORY, CPU_ROM2_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_CPU_ROM3, C_CRTROMTYPE_MANDATORY, CPU_ROM3_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_GFX1,     C_CRTROMTYPE_MANDATORY, GFX1_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_GFX2,     C_CRTROMTYPE_MANDATORY, GFX2_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_GFX3,     C_CRTROMTYPE_MANDATORY, GFX3_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_SPC1,     C_CRTROMTYPE_MANDATORY, SPCH1_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_SPC2,     C_CRTROMTYPE_MANDATORY, SPCH2_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_SPC3,     C_CRTROMTYPE_MANDATORY, SPCH3_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_MCU1,     C_CRTROMTYPE_MANDATORY, MCU1_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_MCU2,     C_CRTROMTYPE_MANDATORY, MCU2_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_MCU3,     C_CRTROMTYPE_MANDATORY, MCU3_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_MCU4,     C_CRTROMTYPE_MANDATORY, MCU4_MAIN_START,
-      C_CRTROMTYPE_DEVICE, C_DEV_BOS_VIDC,     C_CRTROMTYPE_MANDATORY, VIDC_MAIN_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_CPU_ROM1, C_CRTROMTYPE_MANDATORY, CPU_ROM1_MAIN_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_CHARS   , C_CRTROMTYPE_MANDATORY, ROM1_CHR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_AUDIO   , C_CRTROMTYPE_MANDATORY, ROM1_AUD_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_01P2    , C_CRTROMTYPE_MANDATORY, ROM1_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_23P2    , C_CRTROMTYPE_MANDATORY, ROM2_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_01P3    , C_CRTROMTYPE_MANDATORY, ROM3_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_02P3    , C_CRTROMTYPE_MANDATORY, ROM4_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_01P1    , C_CRTROMTYPE_MANDATORY, ROM5_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_23P1    , C_CRTROMTYPE_MANDATORY, ROM6_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_01P1_1  , C_CRTROMTYPE_MANDATORY, ROM7_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_23P1_1  , C_CRTROMTYPE_MANDATORY, ROM8_TILE_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR0    , C_CRTROMTYPE_MANDATORY, ROM1_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR1    , C_CRTROMTYPE_MANDATORY, ROM2_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR2    , C_CRTROMTYPE_MANDATORY, ROM3_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR2_1  , C_CRTROMTYPE_MANDATORY, ROM4_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR3    , C_CRTROMTYPE_MANDATORY, ROM5_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR4    , C_CRTROMTYPE_MANDATORY, ROM6_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR5    , C_CRTROMTYPE_MANDATORY, ROM7_SPR_ROM_START,
+      C_CRTROMTYPE_DEVICE, C_DEV_GNG_SPR5_1  , C_CRTROMTYPE_MANDATORY, ROM8_SPR_ROM_START,
                                                          x"EEEE");                     -- Always finish the array using x"EEEE"
-
 
 ----------------------------------------------------------------------------------------------------------
 -- Audio filters
