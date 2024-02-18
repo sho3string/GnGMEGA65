@@ -155,11 +155,10 @@ begin
     process(clk_main_i)
     begin
         if rising_edge(clk_main_i) then
-            --div <= std_logic_vector(unsigned(div) + "001");
             div <= div + 1;
-            ce_6 <= not div(0);   -- 6809 main cpu
-            ce_3 <= not div(1);   -- Z80 sound cpu
-            ce_1p5 <= not div(2); -- YM2203 x 2
+            ce_6 <= not div(0);                                         -- 6809 main cpu
+            ce_3 <= (not div(1)) and (not div(0));                      -- Z80 sound cpu
+            ce_1p5 <= (not div(2)) and (not div(1)) and (not div(0));   -- YM2203 x 2
         end if;
     end process;
     
