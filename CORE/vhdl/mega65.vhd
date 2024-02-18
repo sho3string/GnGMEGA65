@@ -246,8 +246,7 @@ constant C_MENU_NAMCO_DSWA_7  : natural := 76;
 
 
 -- Galaga specific video processing
-signal div_1        : std_logic_vector(2 downto 0);
-signal div_2        : std_logic_vector(3 downto 0);
+signal div          : std_logic_vector(1 downto 0);
 signal dim_video    : std_logic;
 signal dsw_a_i      : std_logic_vector(7 downto 0);
 signal dsw_b_i      : std_logic_vector(7 downto 0);
@@ -407,23 +406,15 @@ begin
     begin
         video_ce_ovl_o <= '0';
         if rising_edge(clk24_clk) then
-             div_1 <= std_logic_vector(unsigned(div_1) + 1);
-             video_ce <= not div_1(0); -- 12 Mhz Pixel clock
-             video_ce_ovl_o <= '1';    -- OSM clock.
+             div <= std_logic_vector(unsigned(div) + 1);
+             video_ce <= not div(0); -- 12 Mhz Pixel clock
+             video_ce_ovl_o <= '1';  -- OSM clock.
          end if;
     end process;
     
     process (clk48_clk) -- 48 MHz
     begin
         if rising_edge(clk48_clk) then
-            --video_ce_ovl_o <= '0';
-
-            -- OSM pixel clock
-            --div_2 <= std_logic_vector(unsigned(div_2) + 1);
-            --if div_2(0) = '1' then
-            --   video_ce_ovl_o <= '1'; -- 24 MHz
-            --end if;
-
             video_red   <= main_video_red   & main_video_red;
             video_green <= main_video_green & main_video_green;
             video_blue  <= main_video_blue  & main_video_blue;
@@ -502,7 +493,7 @@ begin
 
 
  -- GnG Capcom
-    -- cpu  00000 14000 ( combine all roms into 1 ).
+    -- cpu  00000 14000
     -- chr  14000 04000
     -- snd  18000 08000
     -- scr1 20000 08000
@@ -514,35 +505,45 @@ begin
     
       case qnice_dev_id_i is
     
-        when C_DEV_GNG_CPU_ROM1 => -- 81919 bytes / 00010011111111111111
+        when C_DEV_GNG_CPU_ROM1 => -- 81920 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "00" & qnice_dev_addr_i(16 downto 0);    -- 0x0000 - 0x13fff  ( 00 00000000000000000 to 00 10011111111111111 )
+              qnice_dn_addr <= "00" & qnice_dev_addr_i(16 downto 0);         -- 0x0000 - 0x13fff  ( 00 00000000000000000 to 00 10011111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);            
               
-        when C_DEV_GNG_CHARS  =>  -- 16384 bytes 
+        when C_DEV_GNG_CHARS_1 =>  -- 8192 bytes
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "00101" & qnice_dev_addr_i(13 downto 0); -- 0x14000 -0x17fff  ( 000101 00000000000000 to 000101 11111111111111 )
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);  
+              qnice_dn_addr <= "001010" & qnice_dev_addr_i(12 downto 0);     -- 0x14000 -0x15fff  ( 000101 00000000000000 to 000101 01111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0); 
+              
+        when C_DEV_GNG_CHARS_2 =>  -- 8192 bytes
+              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
+              qnice_dn_addr <= "001011" & qnice_dev_addr_i(12 downto 0);     -- 0x16000 -0x17fff  ( 000101 10000000000001 to 000101 11111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0); 
               
         when C_DEV_GNG_AUDIO  =>  -- 32768 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "0011" & qnice_dev_addr_i(14 downto 0);  -- 0x18000 -0x1ffff  ( 00011 000000000000000 to 00011 111111111111111 )
+              qnice_dn_addr <= "0011" & qnice_dev_addr_i(14 downto 0);        -- 0x18000 -0x1ffff  ( 00011 000000000000000 to 00011 111111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);    
         
-        when C_DEV_GNG_01P2  =>  -- 16384 bytes 
+        when C_DEV_GNG_TILE1  =>  -- 32768 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "00100" & qnice_dev_addr_i(13 downto 0);  -- 0x20000 -0x23fff  ( 001000 00000000000000 to 001000 11111111111111 )
+              qnice_dn_addr <= "0100" & qnice_dev_addr_i(14 downto 0);        -- 0x20000 -0x27fff  ( 00100 000000000000000 to 00100 111111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
+             
+        when C_DEV_GNG_TILE2  =>  -- 32768 bytes 
+              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
+              qnice_dn_addr <= "0101" & qnice_dev_addr_i(14 downto 0);        -- 0x28000 -0x27fff  ( 00101 00000000000000 to 00101 111111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
               
-        /*when C_DEV_GNG_23P2  =>  -- 16384 bytes 
+        when C_DEV_GNG_TILE3  =>  -- 32768 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "001001" & qnice_dev_addr_i(13 downto 0); -- 0x24000 -0x27fff  ( 001001 00000000000000 to 001001 11111111111111 )
+              qnice_dn_addr <= "0110" & qnice_dev_addr_i(14 downto 0);        -- 0x30000 -0x37fff  ( 00110 000000000000000 to 00110 111111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
               
-        when C_DEV_GNG_01P3  =>  -- 16384 bytes 
+        when C_DEV_GNG_TILE4  =>  -- 32768 bytes 
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "00101" & qnice_dev_addr_i(13 downto 0); -- 0x28000 -0x2bfff  ( 00101 000000000000000 to 001001 11111111111111 )
-              qnice_dn_data <= qnice_dev_data_i(7 downto 0);*/
+              qnice_dn_addr <= "0111" & qnice_dev_addr_i(14 downto 0);        -- 0x38000 -0x3ffff  ( 00111 000000000000000 to 00111111111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
             
          when others => null;
       end case;

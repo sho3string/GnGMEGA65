@@ -76,7 +76,7 @@ type WHS_RECORD_ARRAY_TYPE is array (0 to WHS_RECORDS - 1) of WHS_RECORD_TYPE;
 
 constant SCR_WELCOME : string :=
 
-   "Bosconian V0.5.0 (beta)\n" &
+   "GnG V0.5.0 (beta)\n" &
    "-----------------------\n" &
    "\n" &
    "MiSTer port done by Muse in 2023\n\n" &
