@@ -407,8 +407,8 @@ begin
         video_ce_ovl_o <= '0';
         if rising_edge(clk24_clk) then
              div <= std_logic_vector(unsigned(div) + 1);
-             video_ce <= not div(0); -- 12 Mhz Pixel clock
-             video_ce_ovl_o <= '1';  -- OSM clock.
+             video_ce <= not div (1) and not div(0); -- 12 Mhz Pixel clock
+             video_ce_ovl_o <= '1';                  -- OSM clock.
          end if;
     end process;
     
