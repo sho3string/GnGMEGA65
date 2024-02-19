@@ -128,8 +128,8 @@ constant m65_up_crsr       : integer := 73; --Player up
 constant m65_vert_crsr     : integer := 7;  --Player down
 constant m65_left_crsr     : integer := 74; --Player left
 constant m65_horz_crsr     : integer := 2;  --Player right
-constant m65_space         : integer := 60; --Fire
-
+constant m65_space         : integer := 60; --Jump
+constant m65_left_shift    : integer := 15; --Fire
 
 -- Pause, credit button & test mode
 constant m65_p             : integer := 41; --Pause button
@@ -187,18 +187,18 @@ begin
         HS              => video_hs_o,
         VS              => video_vs_o,
             
-        joystick1(0)    => joy_1_right_n_i or not keyboard_n(m65_horz_crsr),
-        joystick1(1)    => joy_1_left_n_i or not keyboard_n(m65_left_crsr),   
-        joystick1(2)    => joy_1_down_n_i or not keyboard_n(m65_vert_crsr),
-        joystick1(3)    => joy_1_up_n_i or not keyboard_n(m65_up_crsr),
-        joystick1(4)    => joy_1_fire_n_i,
+        joystick1(0)    => joy_1_right_n_i and keyboard_n(m65_horz_crsr),
+        joystick1(1)    => joy_1_left_n_i and keyboard_n(m65_left_crsr),   
+        joystick1(2)    => joy_1_down_n_i and keyboard_n(m65_vert_crsr),
+        joystick1(3)    => joy_1_up_n_i and keyboard_n(m65_up_crsr),
+        joystick1(4)    => joy_1_fire_n_i and keyboard_n(m65_left_shift),
         joystick1(5)    => keyboard_n(m65_space),
         
-        joystick2(0)    => joy_1_right_n_i or not keyboard_n(m65_horz_crsr),
-        joystick2(1)    => joy_1_left_n_i or not keyboard_n(m65_left_crsr),   
-        joystick2(2)    => joy_1_down_n_i or not keyboard_n(m65_vert_crsr),
-        joystick2(3)    => joy_1_up_n_i or not keyboard_n(m65_up_crsr),
-        joystick2(4)    => joy_1_fire_n_i,
+        joystick2(0)    => joy_1_right_n_i and keyboard_n(m65_horz_crsr),
+        joystick2(1)    => joy_1_left_n_i and keyboard_n(m65_left_crsr),   
+        joystick2(2)    => joy_1_down_n_i and keyboard_n(m65_vert_crsr),
+        joystick2(3)    => joy_1_up_n_i and keyboard_n(m65_up_crsr),
+        joystick2(4)    => joy_1_fire_n_i and keyboard_n(m65_left_shift),
         joystick2(5)    => keyboard_n(m65_space),
         
         romload_clk     =>  dn_clk_i,   -- use clock for M2M rom loading.
