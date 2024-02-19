@@ -545,6 +545,16 @@ begin
               qnice_dn_addr <= "0111" & qnice_dev_addr_i(14 downto 0);        -- 0x38000 -0x3ffff  ( 00111 000000000000000 to 00111111111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
             
+        when C_DEV_GNG_SPR0  =>   -- 65535 bytes
+              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
+              qnice_dn_addr <= "100" & qnice_dev_addr_i(15 downto 0);         -- 0x40000 -0x4ffff  ( 01000000000000000000 to 01001111111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);
+              
+        when C_DEV_GNG_SPR1  =>   -- 65535 bytes
+              qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
+              qnice_dn_addr <= "101" & qnice_dev_addr_i(15 downto 0);         -- 0x50000 -0x5ffff  ( 01010000000000000000 to 01011111111111111111 )
+              qnice_dn_data <= qnice_dev_data_i(7 downto 0);      
+              
          when others => null;
       end case;
 
