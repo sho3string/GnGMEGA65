@@ -77,9 +77,9 @@ type WHS_RECORD_ARRAY_TYPE is array (0 to WHS_RECORDS - 1) of WHS_RECORD_TYPE;
 constant SCR_WELCOME : string :=
 
    "GnG V0.5.0 (beta)\n" &
-   "-----------------------\n" &
+   "-----------------\n" &
    "\n" &
-   "MiSTer port done by Muse in 2023\n\n" &
+   "MiSTer port done by Muse in 2024\n\n" &
 
    -- We are not insisting. But it would be nice if you gave us credit for MiSTer2MEGA65 by leaving these lines in
    "Powered by MiSTer2MEGA65 Ver 1.0\n"   &
@@ -88,7 +88,8 @@ constant SCR_WELCOME : string :=
    "Credits  : Press '5' or '6'\n"        & 
    "Start    : Press '1' or '2'\n"        &
    "Pause    : Press 'p'\n"               &
-   "Controls : Joy 1 or arrows & space\n" &
+   "Controls 1: Joy 1\n"                  &
+   "Controls 2: l-shift, space\n"         &
    "Svc 1    : Press 's' \n"              &
    "Svc Mode : Caps-Lock on\n"            &
    "\n\n    Press Space to continue.\n"; 
