@@ -185,69 +185,40 @@ signal main_video_vblank   : std_logic;
 -- qnice_clk
 ---------------------------------------------------------------------------------------------
 
-constant C_MENU_OSMPAUSE      : natural := 2;  
-constant C_MENU_OSMDIM        : natural := 3;
-constant C_FLIP_JOYS          : natural := 4;
-constant C_MENU_CRT_EMULATION : natural := 8;
-constant C_MENU_HDMI_16_9_50  : natural := 12;
-constant C_MENU_HDMI_16_9_60  : natural := 13;
-constant C_MENU_HDMI_4_3_50   : natural := 14;
-constant C_MENU_HDMI_5_4_50   : natural := 15;
+constant C_UP_FIRE            : natural := 2;
+constant C_FLIP_JOYS          : natural := 3;
+constant C_MENU_CRT_EMULATION : natural := 7;
+constant C_MENU_HDMI_16_9_50  : natural := 11;
+constant C_MENU_HDMI_16_9_60  : natural := 12;
+constant C_MENU_HDMI_4_3_50   : natural := 13;
+constant C_MENU_HDMI_5_4_50   : natural := 14;
 
-constant C_MENU_VGA_STD       : natural := 21;
-constant C_MENU_VGA_15KHZHSVS : natural := 25;
-constant C_MENU_VGA_15KHZCS   : natural := 26;
-
-constant C_MENU_MIDWAY        : natural := 32;
-constant C_MENU_NAMCO         : natural := 33;
-
--- Midway DIPs
--- Dipswitch B
-constant C_MENU_MIDWAY_DSWB_0 : natural := 38;
-constant C_MENU_MIDWAY_DSWB_1 : natural := 39;
-constant C_MENU_MIDWAY_DSWB_2 : natural := 40;
-constant C_MENU_MIDWAY_DSWB_3 : natural := 41;
-constant C_MENU_MIDWAY_DSWB_4 : natural := 42;
-constant C_MENU_MIDWAY_DSWB_5 : natural := 43;
-constant C_MENU_MIDWAY_DSWB_6 : natural := 44;
-constant C_MENU_MIDWAY_DSWB_7 : natural := 45;
+constant C_MENU_VGA_STD       : natural := 20;
+constant C_MENU_VGA_15KHZHSVS : natural := 21;
+constant C_MENU_VGA_15KHZCS   : natural := 25;
 
 -- Dipswitch A
-constant C_MENU_MIDWAY_DSWA_0 : natural := 47;
-constant C_MENU_MIDWAY_DSWA_1 : natural := 48;
-constant C_MENU_MIDWAY_DSWA_2 : natural := 49;
-constant C_MENU_MIDWAY_DSWA_3 : natural := 50;
-constant C_MENU_MIDWAY_DSWA_4 : natural := 51;
-constant C_MENU_MIDWAY_DSWA_5 : natural := 52;
-constant C_MENU_MIDWAY_DSWA_6 : natural := 53;
-constant C_MENU_MIDWAY_DSWA_7 : natural := 54;
+constant C_MENU_MIDWAY_DSWA_0 : natural := 32;
+constant C_MENU_MIDWAY_DSWA_1 : natural := 33;
+constant C_MENU_MIDWAY_DSWA_2 : natural := 34;
+constant C_MENU_MIDWAY_DSWA_3 : natural := 35;
+constant C_MENU_MIDWAY_DSWA_4 : natural := 36;
+constant C_MENU_MIDWAY_DSWA_5 : natural := 37;
+constant C_MENU_MIDWAY_DSWA_6 : natural := 38;
+constant C_MENU_MIDWAY_DSWA_7 : natural := 39;
 
-
--- Namco DIPs
 -- Dipswitch B
-constant C_MENU_NAMCO_DSWB_0  : natural := 60;
-constant C_MENU_NAMCO_DSWB_1  : natural := 61;
-constant C_MENU_NAMCO_DSWB_2  : natural := 62;
-constant C_MENU_NAMCO_DSWB_3  : natural := 63;
-constant C_MENU_NAMCO_DSWB_4  : natural := 64;
-constant C_MENU_NAMCO_DSWB_5  : natural := 65;
-constant C_MENU_NAMCO_DSWB_6  : natural := 66;
-constant C_MENU_NAMCO_DSWB_7  : natural := 67;
-
--- Dipswitch A
-constant C_MENU_NAMCO_DSWA_0  : natural := 69;
-constant C_MENU_NAMCO_DSWA_1  : natural := 70;
-constant C_MENU_NAMCO_DSWA_2  : natural := 71;
-constant C_MENU_NAMCO_DSWA_3  : natural := 72;
-constant C_MENU_NAMCO_DSWA_4  : natural := 73;
-constant C_MENU_NAMCO_DSWA_5  : natural := 74;
-constant C_MENU_NAMCO_DSWA_6  : natural := 75;
-constant C_MENU_NAMCO_DSWA_7  : natural := 76;
-
+constant C_MENU_MIDWAY_DSWB_0 : natural := 41;
+constant C_MENU_MIDWAY_DSWB_1 : natural := 42;
+constant C_MENU_MIDWAY_DSWB_2 : natural := 43;
+constant C_MENU_MIDWAY_DSWB_3 : natural := 44;
+constant C_MENU_MIDWAY_DSWB_4 : natural := 45;
+constant C_MENU_MIDWAY_DSWB_5 : natural := 46;
+constant C_MENU_MIDWAY_DSWB_6 : natural := 47;
+constant C_MENU_MIDWAY_DSWB_7 : natural := 48;
 
 -- Galaga specific video processing
 signal div          : std_logic_vector(1 downto 0);
-signal dim_video    : std_logic;
 signal dsw_a_i      : std_logic_vector(7 downto 0);
 signal dsw_b_i      : std_logic_vector(7 downto 0);
 
@@ -271,7 +242,6 @@ signal ddram_we         : std_logic;
 signal qnice_dn_addr    : std_logic_vector(18 downto 0);
 signal qnice_dn_data    : std_logic_vector(7 downto 0);
 signal qnice_dn_wr      : std_logic;
-
 
 begin
 
@@ -349,10 +319,9 @@ begin
       )
       port map (
          clk_main_i           => clk12_clk,
+         clk24_clk_i          => clk24_clk,
          reset_soft_i         => main_reset_core_i,
          reset_hard_i         => main_reset_m2m_i,
-         pause_i              => main_pause_core_i and main_osm_control_i(C_MENU_OSMPAUSE),
-         dim_video_o          => dim_video,
          clk_main_speed_i     => CORE_CLK_SPEED,
          
          -- Video output
@@ -418,7 +387,7 @@ begin
             video_red   <= main_video_red   & main_video_red;
             video_green <= main_video_green & main_video_green;
             video_blue  <= main_video_blue  & main_video_blue;
-               
+            
             video_hs     <= main_video_hs;
             video_vs     <= main_video_vs;
             video_hblank <= not main_video_hblank;
@@ -497,8 +466,8 @@ begin
     -- chr  14000 04000
     -- snd  18000 08000
     -- scr1 20000 08000
-    --scr2 28000 08000
-    --scr3 30000 08000
+    -- scr2 28000 08000
+    -- scr3 30000 08000
     -- ---- 38000 08000
     -- obj1 40000 10000
     -- obj2 50000 10000
