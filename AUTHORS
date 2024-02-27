@@ -1,24 +1,25 @@
-Bosconian: Star Destroyer for MEGA65 
-====================================
+Ghosts'n Goblins for MEGA65 
+===========================
 
-done in 2023 by Muse
+Done in 2024 by Muse
 	* Muse       github.com/sho3string
+M2M Framework by
 	* sy2002     github.com/sy2002     www.sy2002.de
     	* MJoergen   github.com/MJoergen
 
-BosconianMEGA65 is licensed under the terms of GNU/GPL v3, for more information please read the file LICENSE
+GnGMEGA65 is licensed under the terms of GNU/GPL v3, for more information please read the file LICENSE
 Parts of GalagaMEGA65 are licensed under other Free-software licenses as described in the source code
 
-BosconianMEGA65:
-----------------
+GnGMEGA65:
+----------
 
-  BosconianMEGA65 is a port of Arcade-Bosconian_MiSTer
+  GnGMEGA65 is a port of Arcade-GnG_MiSTer
       done by the MiSTer Development Team
-      Original GitHub Repository: https://github.com/MiSTer-devel/Arcade-Bosconian_MiSTer
+      Original GitHub Repository: https://github.com/MiSTer-devel/Arcade-GnG_MiSTer/
       Contributors:
-      * NolanNicholson
+      * sorgelig, jotego, hubertbanas, alanswx, SerErris, eubrunosilva and clockfort
 
-Other than that and my own work, BosconianMEGA65 uses:
+Other than that and my own work, GnGMEGA65 uses:
 ---------------------------------------------------
 
   * MiSTer2MEGA65 by The MiSTer2MEGA65 Development Team
