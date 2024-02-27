@@ -1,7 +1,7 @@
 Version 0.5.0 - February 27, 2024
 =================================
 
-Bosconian for the MEGA65 version 0.5.0 is based on this version 1.0.0 of the MiSTer2MEGA65 framework.
+Ghosts'n Goblins for the MEGA65 version 0.5.0 is based on this version 1.0.0 of the MiSTer2MEGA65 framework.
 
 ## Features
 * Supports various HDMI modes
