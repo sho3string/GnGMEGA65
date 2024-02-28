@@ -3,7 +3,7 @@ $WorkingDirectory = Get-Location
 $inFile = Join-Path $WorkingDirectory "gg1.bin"
 $outPrefix = Join-Path $WorkingDirectory"/arcade/gng" "gg1_"
 $SizeToCopy = 8192
-$outputFile = "/arcade/gng/gngfg"
+$outputFile = "/arcade/gng/gngcfg"
 $length3 = 53
 
 
