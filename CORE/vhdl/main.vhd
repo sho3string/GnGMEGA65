@@ -190,29 +190,29 @@ begin
         joystick2(5)    => p2_n_jump and keyboard_n(m65_space),
         
         romload_clk     =>  dn_clk_i,   -- use clock for M2M rom loading.
-	    romload_wr      =>  dn_wr_i,
-	    romload_addr    =>  dn_addr_i,
-	    romload_data    =>  dn_data_i,
-	    
-	    enable_char     => '1',
-	    enable_scr      => '1',
-	    enable_obj      => '1',
-	
-	    dip_pause       => pause,
-	    dip_inv         => not inv_ena or not dsw_a_i(0), -- FLIP SCREEN , not working.
-	    dip_lives(0)    => not dsw_b_i(6),
-	    dip_lives(1)    => not dsw_b_i(7),
-	    dip_level(0)    => not dsw_b_i(1),
-	    dip_level(1)    => not dsw_b_i(2),
-	    dip_bonus(0)    => not dsw_b_i(3),
-	    dip_bonus(1)    => not dsw_b_i(4),
-	    dip_game_mode   => not dsw_a_i(1),  -- 1 = Game, 0 = Service mode
-	    dip_upright     => not dsw_b_i(5),  -- 1 = cocktail, 0 - upright
-	    dip_attract_snd => not dsw_a_i(2),  -- ATTRACT SOUND - ( 0 = SOUND )
-	    
-	    enable_psg      => '1',
-	    enable_fm       => '1',
-	    ym_snd          => audio_left_o
+        romload_wr      =>  dn_wr_i,
+        romload_addr    =>  dn_addr_i,
+        romload_data    =>  dn_data_i,
+        
+        enable_char     => '1',
+        enable_scr      => '1',
+        enable_obj      => '1',
+        
+        dip_pause       => pause,
+        dip_inv         => not inv_ena or not dsw_a_i(0), -- FLIP SCREEN , not working.
+        dip_lives(0)    => not dsw_b_i(6),
+        dip_lives(1)    => not dsw_b_i(7),
+        dip_level(0)    => not dsw_b_i(1),
+        dip_level(1)    => not dsw_b_i(2),
+        dip_bonus(0)    => not dsw_b_i(3),
+        dip_bonus(1)    => not dsw_b_i(4),
+        dip_game_mode   => not dsw_a_i(1),  -- 1 = Game, 0 = Service mode
+        dip_upright     => not dsw_b_i(5),  -- 1 = cocktail, 0 - upright
+        dip_attract_snd => not dsw_a_i(2),  -- ATTRACT SOUND - ( 0 = SOUND )
+        
+        enable_psg      => '1',
+        enable_fm       => '1',
+        ym_snd          => audio_left_o
 	   
      );
      

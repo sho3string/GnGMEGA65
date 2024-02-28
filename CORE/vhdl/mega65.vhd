@@ -172,7 +172,7 @@ signal clk48_rst           : std_logic;
 -- main_clk (MiSTer core's clock)
 ---------------------------------------------------------------------------------------------
 
--- Unprocessed video output from the Galaga core
+-- Unprocessed video output from the core
 signal main_video_red      : std_logic_vector(3 downto 0);   
 signal main_video_green    : std_logic_vector(3 downto 0);
 signal main_video_blue     : std_logic_vector(3 downto 0);
@@ -217,7 +217,7 @@ constant C_MENU_MIDWAY_DSWB_5 : natural := 46;
 constant C_MENU_MIDWAY_DSWB_6 : natural := 47;
 constant C_MENU_MIDWAY_DSWB_7 : natural := 48;
 
--- Galaga specific video processing
+-- video processing
 signal div          : std_logic_vector(1 downto 0);
 signal dsw_a_i      : std_logic_vector(7 downto 0);
 signal dsw_b_i      : std_logic_vector(7 downto 0);
@@ -238,7 +238,7 @@ signal ddram_data       : std_logic_vector(63 downto 0);
 signal ddram_be         : std_logic_vector( 7 downto 0);
 signal ddram_we         : std_logic;
 
--- ROM devices for Galaga
+-- ROM devices
 signal qnice_dn_addr    : std_logic_vector(18 downto 0);
 signal qnice_dn_data    : std_logic_vector(7 downto 0);
 signal qnice_dn_wr      : std_logic;
@@ -516,12 +516,12 @@ begin
             
         when C_DEV_GNG_SPR0  =>   -- 65535 bytes
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "100" & qnice_dev_addr_i(15 downto 0);         -- 0x40000 -0x4ffff  ( 01000000000000000000 to 01001111111111111111 )
+              qnice_dn_addr <= "100" & qnice_dev_addr_i(15 downto 0);         -- 0x40000 -0x4ffff  ( 0100 0000000000000000 to 01001111111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);
               
         when C_DEV_GNG_SPR1  =>   -- 65535 bytes
               qnice_dn_wr   <= qnice_dev_ce_i and qnice_dev_we_i;
-              qnice_dn_addr <= "101" & qnice_dev_addr_i(15 downto 0);         -- 0x50000 -0x5ffff  ( 01010000000000000000 to 01011111111111111111 )
+              qnice_dn_addr <= "101" & qnice_dev_addr_i(15 downto 0);         -- 0x50000 -0x5ffff  ( 0101 0000000000000000 to 01011111111111111111 )
               qnice_dn_data <= qnice_dev_data_i(7 downto 0);      
               
          when others => null;

@@ -41,9 +41,6 @@ constant QNICE_FIRMWARE           : string  := QNICE_FIRMWARE_M2M;
 -- then add all the clocks speeds here by adding more constants.
 ----------------------------------------------------------------------------------------------------------
 
--- Galaga core's clock speed
--- Actual clock is 18_432 Mhz ( see MAME driver - galaga.cpp ).
--- MiSTer uses 18Mhz
 constant CORE_CLK_SPEED       : natural := 12_000_000;   -- 12Mhz main clock
 
 -- System clock speed (crystal that is driving the FPGA) and QNICE clock speed
