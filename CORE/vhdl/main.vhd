@@ -255,12 +255,12 @@ begin
                 p2_n_fire <= '0'  when (joy_2_fire_n_i = '0' and joy_2_up_n_i = '1') else '1';
                 p2_n_up   <= '0'  when (joy_2_up_n_i = '0' and joy_2_fire_n_i = '1')  else '1';
             else -- standard inputs
-                p1_n_fire <= joy_1_fire_n_i;
-                p1_n_up <= joy_1_up_n_i;
+                p1_n_fire <= joy_1_fire_n_i and keyboard_n(m65_left_shift);
+                p1_n_up <= joy_1_up_n_i and keyboard_n(m65_up_crsr);
                 p1_n_jump <= keyboard_n(m65_space);
                 
-                p2_n_fire <= joy_2_fire_n_i;
-                p2_n_up <= joy_2_up_n_i;
+                p2_n_fire <= joy_2_fire_n_i and keyboard_n(m65_left_shift);
+                p2_n_up <= joy_2_up_n_i and keyboard_n(m65_up_crsr);
                 p2_n_jump <= keyboard_n(m65_space);
             end if;
         end if;

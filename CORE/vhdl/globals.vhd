@@ -156,10 +156,10 @@ constant ROM1_MAIN_CPU_ROM            : string  := "arcade/gng/rom1.bin"  & ENDS
 constant ROM1_CHR1_ROM                : string  := "arcade/gng/gg1_1.bin" & ENDSTR;
 constant ROM1_CHR2_ROM                : string  := "arcade/gng/gg1_2.bin" & ENDSTR;
 constant ROM1_AUD_ROM                 : string  := "arcade/gng/gg2.bin"   & ENDSTR;
-constant ROM1_TILE_ROM                : string  := "arcade/gng/gg98.bin"  & ENDSTR;
-constant ROM2_TILE_ROM                : string  := "arcade/gng/gg76.bin"  & ENDSTR;
-constant ROM3_TILE_ROM                : string  := "arcade/gng/gg1110.bin"& ENDSTR;
-constant ROM4_TILE_ROM                : string  := "arcade/gng/gg1110.bin"& ENDSTR;
+constant ROM1_TILE_ROM                : string  := "arcade/gng/rom98.bin"  & ENDSTR;
+constant ROM2_TILE_ROM                : string  := "arcade/gng/rom76.bin"  & ENDSTR;
+constant ROM3_TILE_ROM                : string  := "arcade/gng/rom1110.bin"& ENDSTR;
+constant ROM4_TILE_ROM                : string  := "arcade/gng/rom1110.bin"& ENDSTR;
 constant ROM1_SPR_ROM                 : string  := "arcade/gng/spr1.bin"  & ENDSTR;
 constant ROM2_SPR_ROM                 : string  := "arcade/gng/spr2.bin"  & ENDSTR;
 
