@@ -180,14 +180,14 @@ begin
         joystick1(2)    => joy_1_down_n_i and keyboard_n(m65_vert_crsr),
         joystick1(3)    => p1_n_up,
         joystick1(4)    => p1_n_fire,
-        joystick1(5)    => p1_n_jump and keyboard_n(m65_space),
+        joystick1(5)    => p1_n_jump,
         
         joystick2(0)    => joy_2_right_n_i and keyboard_n(m65_horz_crsr),
         joystick2(1)    => joy_2_left_n_i and keyboard_n(m65_left_crsr),   
         joystick2(2)    => joy_2_down_n_i and keyboard_n(m65_vert_crsr),
         joystick2(3)    => p2_n_up,
         joystick2(4)    => p2_n_fire,
-        joystick2(5)    => p2_n_jump and keyboard_n(m65_space),
+        joystick2(5)    => p2_n_jump,
         
         romload_clk     =>  dn_clk_i,   -- use clock for M2M rom loading.
         romload_wr      =>  dn_wr_i,
