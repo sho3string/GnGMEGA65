@@ -92,7 +92,8 @@ constant SCR_WELCOME : string :=
    "------------\n"                       &
    "Joy 1 or arrows to move your knight.\n"&
    "To shoot, press the fire button or left shift.\n" &
-   "To jump, press up and fire simulatenously, or space.\n" &
+   "To jump, press up and fire simulatenously,\n" &
+   "  secondary fire button, or space.\n" &
    "\n\n    Press Space to continue.\n"; 
    
 constant HELP_1 : string :=

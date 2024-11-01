@@ -257,11 +257,11 @@ begin
             else -- standard inputs
                 p1_n_fire <= joy_1_fire_n_i and keyboard_n(m65_left_shift);
                 p1_n_up <= joy_1_up_n_i and keyboard_n(m65_up_crsr);
-                p1_n_jump <= keyboard_n(m65_space);
+                p1_n_jump <= '0' when (keyboard_n(m65_space) = '0' or pot1_x_i = x"FF") else '1';
                 
                 p2_n_fire <= joy_2_fire_n_i and keyboard_n(m65_left_shift);
                 p2_n_up <= joy_2_up_n_i and keyboard_n(m65_up_crsr);
-                p2_n_jump <= keyboard_n(m65_space);
+                p2_n_jump <= '0' when (keyboard_n(m65_space) = '0' or pot2_x_i = x"FF") else '1';
             end if;
         end if;
     end process;
